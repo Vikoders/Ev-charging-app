@@ -116,12 +116,10 @@ createApp({
           <div class="notice success" v-if="successMessage">{{ successMessage }}</div>
           <div class="notice error" v-if="errorMessage">{{ errorMessage }}</div>
           <div class="timing">
-               <input type="number" id="hour" min="0" step="1" placeholder="hh"></input>
-               <h2 class="colon"> : </h2>
-               <input type="number" id="min" min="0" step="1" placeholder="mm"></input>
-               <h2 class="colon"> : </h2>
                <input type="number" id="sec" min="0" step="1" placeholder="ss"></input>
-               </div>
+          </div>
+          
+
           <div class="credentials-card">
             <h3>API Configuration</h3>
             <p>Update <code>window.APP_CONFIG.API_BASE_URL</code> in <code>frontend/index.html</code> before deployment.</p>
@@ -166,9 +164,16 @@ createApp({
             </label>
           </div>
 
-          <div class="action-row">
+        <div class="action-row">
             <button class="secondary-btn" :disabled="!auth.token" @click="applyFilters">Apply filters</button>
             <button class="ghost-btn" :disabled="!auth.token" @click="resetFilters">Reset</button>
+            <button
+              class="primary-btn"
+              @click="startButtonTimer"
+              :disabled="isTimerButtonDisabled"
+            >
+              {{ isTimerButtonDisabled ? 'Disabled' : 'Disable in ${timerSeconds}s' }}
+            </button>
           </div>
 
           <form class="station-form" @submit.prevent="submitStation">
@@ -269,6 +274,8 @@ createApp({
     const loadingStations = ref(false);
     const savingStation = ref(false);
     const editingStationId = ref('');
+    const isTimerButtonDisabled = ref(false);
+    const timerSeconds = ref(5);
     const stations = ref([]);
     const auth = reactive(JSON.parse(localStorage.getItem('ev-auth') || '{"token":"","user":null}'));
     const authForm = reactive({ name: '', email: '', password: '' });
@@ -296,6 +303,21 @@ createApp({
     function resetMessages() {
       errorMessage.value = '';
       successMessage.value = '';
+    }
+
+    function startButtonTimer() {
+      if (isTimerButtonDisabled.value) return;
+
+      timerSeconds.value = 5;
+
+      const interval = setInterval(() => {
+        timerSeconds.value -= 1;
+
+        if (timerSeconds.value <= 0) {
+          clearInterval(interval);
+          isTimerButtonDisabled.value = true;
+        }
+      }, 1000);
     }
 
     function persistAuth(payload) {
@@ -464,6 +486,8 @@ createApp({
       loadingStations,
       savingStation,
       editingStationId,
+      isTimerButtonDisabled,
+      timerSeconds,
       stations,
       auth,
       authForm,
@@ -474,6 +498,7 @@ createApp({
       submitStation,
       editStation,
       removeStation,
+      startButtonTimer,
       resetStationForm,
       applyFilters,
       resetFilters,
