@@ -110,11 +110,18 @@ createApp({
               <input v-model="authForm.password" type="password" placeholder="••••••••">
             </label>
             <button class="primary-btn" type="submit">{{ authMode === 'login' ? 'Login' : 'Create account' }}</button>
+            
           </form>
 
           <div class="notice success" v-if="successMessage">{{ successMessage }}</div>
           <div class="notice error" v-if="errorMessage">{{ errorMessage }}</div>
-
+          <div class="timing">
+               <input type="number" id="hour" min="0" step="1" placeholder="hh"></input>
+               <h2 class="colon"> : </h2>
+               <input type="number" id="min" min="0" step="1" placeholder="mm"></input>
+               <h2 class="colon"> : </h2>
+               <input type="number" id="sec" min="0" step="1" placeholder="ss"></input>
+               </div>
           <div class="credentials-card">
             <h3>API Configuration</h3>
             <p>Update <code>window.APP_CONFIG.API_BASE_URL</code> in <code>frontend/index.html</code> before deployment.</p>
